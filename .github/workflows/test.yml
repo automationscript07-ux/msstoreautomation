@@ -1,0 +1,31 @@
+name: Selenium Automation Manual Run
+
+on:
+  workflow_dispatch:  # Enables manual trigger
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies with npm ci
+        run: npm ci
+
+      - name: Run Puppeteer Tests
+        run: npm test
+
+      - name: Upload Excel Report
+        if: always() # ensures this runs even if tests fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: personalizer-excel-report
+          path: report/*.xlsx
